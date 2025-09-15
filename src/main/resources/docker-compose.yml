@@ -1,0 +1,42 @@
+services:
+  rehobot-app:
+    container_name: rehobot-container
+    build: .
+    image: rehobot-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/rehobot
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: secreta
+
+  db:
+    image: mariadb:10.3
+    container_name: rehobot-db
+    environment:
+      MYSQL_ROOT_PASSWORD: secreta
+      MYSQL_DATABASE: rehobot
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secreta
+    ports:
+      - "3309:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: rehobot-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD: secreta
+    ports:
+      - "3302:80"
+    depends_on:
+      - db
+
+volumes:
+  dbdata:

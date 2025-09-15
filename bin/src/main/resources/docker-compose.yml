@@ -1,0 +1,28 @@
+services:
+  db:
+    image: mariadb:10.3
+    environment:
+      MYSQL_ROOT_PASSWORD: secreta
+      MYSQL_DATABASE: rehobot
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secreta
+    ports:
+      - "3309:3306"
+    volumes:
+      - dbdata:/var/lib/mysql/data
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD: secreta
+    restart: always
+    ports:
+      - "3302:80"
+    depends_on:
+      - db
+volumes:
+  dbdata:
