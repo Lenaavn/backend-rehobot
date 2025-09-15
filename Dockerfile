@@ -10,6 +10,9 @@ COPY mvnw ./
 COPY .mvn .mvn
 COPY src ./src
 
+# Dar permisos de ejecución al Maven Wrapper
+RUN chmod +x mvnw
+
 # Construir el proyecto usando Maven Wrapper
 RUN ./mvnw clean package -DskipTests
 
