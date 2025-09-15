@@ -12,6 +12,5 @@ public interface CitaRepository extends JpaRepository<Cita,Integer>{
 	 List<Cita> findByVehiculo_IdUsuario(int idUsuario);
 	 List<Cita> findByServicio_IdAndFecha(int idServicio, LocalDate fecha);
 	 List<Cita> findByFecha(LocalDate fecha);
-	 List<Cita> findByActivoTrue();
 
 }

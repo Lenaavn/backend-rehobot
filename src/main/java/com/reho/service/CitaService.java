@@ -26,7 +26,7 @@ public class CitaService {
 	private PagoRepository pagoRepository;
 
 	public List<Cita> findAll() {
-		return this.citaRepository.findByActivoTrue();
+		return this.citaRepository.findAll();
 	}
 
 	public boolean existsCita(int idCita) {
