@@ -38,6 +38,12 @@ public class CitaMapper {
 		dto.setFecha(cita.getFecha());
 		dto.setHora(cita.getHora());
 		dto.setEstado(cita.getEstado());
+		dto.setUsuarioActivo(
+			    cita.getVehiculo() != null &&
+			    cita.getVehiculo().getUsuario() != null &&
+			    cita.getVehiculo().getUsuario().isActivo()
+			);
+
 		return dto;
 	}
 

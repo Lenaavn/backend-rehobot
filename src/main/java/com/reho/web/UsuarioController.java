@@ -1,6 +1,7 @@
 package com.reho.web;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reho.persistence.entities.Usuario;
+import com.reho.persistence.entities.Vehiculo;
 import com.reho.service.UsuarioService;
 
 @RestController
@@ -32,13 +34,22 @@ public class UsuarioController {
 
 	@GetMapping("/{idUsuario}")
 	public ResponseEntity<Usuario> findById(@PathVariable int idUsuario) {
-		if (this.usuarioService.existsUsuario(idUsuario)) {
-			return ResponseEntity.ok(this.usuarioService.findById(idUsuario).get());
-		}
+	    if (!usuarioService.existsUsuario(idUsuario)) {
+	        return ResponseEntity.notFound().build();
+	    }
 
-		return ResponseEntity.notFound().build();
+	    Usuario usuario = usuarioService.findById(idUsuario).get();
 
+	    if (usuario.getVehiculos() != null) {
+	        List<Vehiculo> activos = usuario.getVehiculos().stream()
+	            .filter(Vehiculo::isActivo)
+	            .collect(Collectors.toList());
+	        usuario.setVehiculos(activos);
+	    }
+
+	    return ResponseEntity.ok(usuario);
 	}
+
 
 	@PostMapping
 	// ResponseEntity<?> para permitir diferentes tipos de respuesta

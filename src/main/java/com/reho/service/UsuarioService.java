@@ -8,15 +8,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.reho.persistence.entities.Cita;
+import com.reho.persistence.entities.ServiCita;
 import com.reho.persistence.entities.Usuario;
+import com.reho.persistence.entities.Vehiculo;
 import com.reho.persistence.entities.enums.Rol;
+import com.reho.persistence.repository.CitaRepository;
+import com.reho.persistence.repository.ServiCitaRepository;
 import com.reho.persistence.repository.UsuarioRepository;
+import com.reho.persistence.repository.VehiculoRepository;
 
 @Service
 public class UsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private VehiculoRepository vehiculoRepository;
+	
+	@Autowired
+	private CitaRepository citaRepository;
+
+	@Autowired
+	private ServiCitaRepository serviCitaRepository;
 
 	private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -115,15 +130,33 @@ public class UsuarioService {
 		return usuarios;
 	}
 	
-	public boolean desactivar(int id) {
-		Optional<Usuario> usu = usuarioRepository.findById(id);
-		if (usu.isPresent()) {
-			Usuario usuario = usu.get();
-			usuario.setActivo(false);
-			usuarioRepository.save(usuario);
-			return true;
-		}
-		return false;
+	public boolean desactivar(int idUsuario) {
+	    Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+	    if (usuarioOpt.isEmpty()) {
+	        return false;
+	    }
+
+	    Usuario usuario = usuarioOpt.get();
+	    usuario.setActivo(false);
+	    usuarioRepository.save(usuario);
+
+	    // Desactivar vehículos
+	    List<Vehiculo> vehiculos = vehiculoRepository.findByIdUsuario(idUsuario);
+	    vehiculos.forEach(v -> v.setActivo(false));
+	    vehiculoRepository.saveAll(vehiculos);
+
+	    // citas
+	    List<Cita> citas = citaRepository.findByUsuarioId(idUsuario);
+	    citas.forEach(cita -> {
+	    	
+	        // Desactivar valoraciones asociadas a la cita
+	        List<ServiCita> valoraciones = serviCitaRepository.findByIdCita(cita.getId());
+	        valoraciones.forEach(vc -> vc.setActivo(false));
+	        serviCitaRepository.saveAll(valoraciones);
+	    });
+
+	    return true;
 	}
+
 
 }

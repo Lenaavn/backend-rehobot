@@ -13,4 +13,10 @@ public interface ServiCitaRepository extends JpaRepository<ServiCita,Integer>{
 	List<ServiCita> findByActivoTrue();
 	List<ServiCita> findTop5ByActivoTrueOrderByValoracionDesc();
 	
+	List<ServiCita> findByIdCita(int idCita);
+
+
+
+
+	
 }

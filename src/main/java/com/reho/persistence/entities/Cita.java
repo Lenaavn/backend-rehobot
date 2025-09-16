@@ -53,6 +53,9 @@ public class Cita {
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private Estado estado;
+    
+    @Column(name = "activo")
+    private boolean activo = true;
 
     @ManyToOne
     @JoinColumn(name = "id_vehiculo", referencedColumnName = "id", insertable = false, updatable = false)

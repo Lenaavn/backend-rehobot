@@ -23,6 +23,7 @@ public class CitaDTO {
 	private Nombre servicio;
 	private String nombreUsuario;
 	private int idPago;
+    private boolean usuarioActivo;
 	
 	@JsonFormat( pattern = "yyyy-MM-dd")
 	private LocalDate fecha;

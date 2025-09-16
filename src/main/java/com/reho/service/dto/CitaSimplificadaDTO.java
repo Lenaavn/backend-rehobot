@@ -16,5 +16,5 @@ public class CitaSimplificadaDTO {
     private Integer id;
     private LocalDate fecha;
     private LocalTime hora;
-    private Estado estado;
+    private Estado estado;   
 }

@@ -64,38 +64,46 @@ public class AuthController {
 	public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthenticationRequest request) {
 	    if (request.getEmail() == null || request.getEmail().isEmpty()) {
 	        return ResponseEntity.badRequest().body(AuthResponse.builder()
-				.mensaje("El email es obligatorio.")
-				.build());
+	            .mensaje("El email es obligatorio.")
+	            .build());
 	    }
 
 	    if (request.getContrasena() == null || request.getContrasena().isEmpty()) {
 	        return ResponseEntity.badRequest().body(AuthResponse.builder()
-				.mensaje("La contraseña es obligatoria.")
-				.build());
+	            .mensaje("La contraseña es obligatoria.")
+	            .build());
 	    }
 
 	    if (!authServiceImpl.existeUsuarioPorEmail(request.getEmail())) {
 	        return ResponseEntity.badRequest().body(AuthResponse.builder()
-				.mensaje("El email es incorrecto.")
-				.build());
+	            .mensaje("El email es incorrecto.")
+	            .build());
 	    }
 
 	    if (!authServiceImpl.verificarContrasena(request.getEmail(), request.getContrasena())) {
 	        return ResponseEntity.badRequest().body(AuthResponse.builder()
-				.mensaje("La contraseña es incorrecta.")
-				.build());
+	            .mensaje("La contraseña es incorrecta.")
+	            .build());
 	    }
 
 	    var usuario = usuarioRepository.findByEmail(request.getEmail()).orElseThrow();
+
+	    if (!usuario.isActivo()) {
+	        return ResponseEntity.status(403).body(AuthResponse.builder()
+	            .mensaje("El usuario está desactivado.")
+	            .build());
+	    }
+
 	    String accessToken = jwtService.generateAccessToken(usuario);
 	    String refreshToken = jwtService.generateRefreshToken(usuario);
 
 	    return ResponseEntity.ok(AuthResponse.builder()
-			.accessToken(accessToken)
-			.refreshToken(refreshToken)
-			.mensaje("Inicio sesion correctamente.")
-			.build());
+	        .accessToken(accessToken)
+	        .refreshToken(refreshToken)
+	        .mensaje("Inicio sesión correctamente.")
+	        .build());
 	}
+
 
 	@PostMapping("/refresh")
 	public ResponseEntity<AuthResponse> refresh(@RequestBody AuthenticationRequest request) {
